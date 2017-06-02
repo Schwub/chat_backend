@@ -1,8 +1,6 @@
 package main
 
-import (
-	"github.com/fatih/structs"
-)
+import ()
 
 type allUsers struct {
 	mtype   string `json:"type"`
@@ -26,18 +24,13 @@ func allUsersJson(m map[*client]bool) interface{} {
 	alluser["type"] = "event"
 	alluser["subtype"] = "user"
 	alluser["event"] = "allUsers"
-	//rainer := make(map[string]string)
-	//rainer["name"] = "Rainer Winkler"
-	//rainer["email"] = "drache@offiziel.alt"
-	//rainer["id"] = "eins"
-	rainer := user{
-		name:  "Rainer Winkler",
-		email: "drache@offiziel.alt",
-		id:    1,
-	}
+	rainer := make(map[string]string)
+	rainer["name"] = "Rainer Winkler"
+	rainer["email"] = "drache@offiziel.alt"
+	rainer["id"] = "eins"
 
 	users := make([]interface{}, 0, 1)
-	users = append(users, structs.Map(rainer))
+	users = append(users, rainer)
 	alluser["data"] = users
 	return alluser
 }
