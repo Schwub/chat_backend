@@ -43,6 +43,8 @@ func (c client) handleMessage(m map[string]interface{}) {
 	switch m["subtype"] {
 	case "user":
 		c.handleUserEvent(m)
+	case "auth":
+		c.handleAuthEvent(m)
 	default:
 		log.Println("Message handling not implemented, yet")
 	}
@@ -53,8 +55,22 @@ func (c client) handleUserEvent(m map[string]interface{}) {
 	switch m["command"] {
 	case "getAllUsers":
 		log.Println("handle allUsers")
-		msg := allUsersJson(*c.hub)
+		msg := getAllUsers(*c.hub)
 		log.Println(msg)
 		c.send <- msg
 	}
+}
+
+func (c *client) handleAuthEvent(m map[string]interface{}) {
+	switch m["command"] {
+	case "newRegistration":
+		log.Println("handle newRegistration")
+		msg := newRegistration(c, m)
+		c.send <- msg
+	case "login":
+		log.Println("handle login")
+		msg := login(c, m)
+		c.send <- msg
+	}
+
 }

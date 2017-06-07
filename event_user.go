@@ -2,14 +2,7 @@ package main
 
 import ()
 
-type allUsers struct {
-	mtype   string `json:"type"`
-	subtype string `json:subtype`
-	event   string `json:event`
-	data    []user `json:data`
-}
-
-func allUsersJson(h hub) interface{} {
+func getAllUsers(h hub) interface{} {
 
 	//users := make([]user, 0, len(m))
 	//for k := range m {

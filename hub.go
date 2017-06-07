@@ -7,12 +7,20 @@ import (
 )
 
 type hub struct {
-	join    chan *client
-	leave   chan *client
-	clients map[*client]bool
-	rooms   map[room]string
+	join           chan *client
+	leave          chan *client
+	clients        map[*client]bool
+	rooms          map[room]string
+	registerdUsers map[string]*user
 }
 
+func (h hub) getAllRegisteredUserNames() []string {
+	userNames := make([]string, 0, 0)
+	for _, v := range h.registerdUsers {
+		userNames = append(userNames, v.name)
+	}
+	return userNames
+}
 func (h hub) usersJson() []map[string]interface{} {
 	users := make([]map[string]interface{}, 0, 0)
 	for k := range h.clients {
@@ -23,10 +31,11 @@ func (h hub) usersJson() []map[string]interface{} {
 
 func newHub() *hub {
 	return &hub{
-		join:    make(chan *client),
-		leave:   make(chan *client),
-		clients: make(map[*client]bool),
-		rooms:   make(map[room]string),
+		join:           make(chan *client),
+		leave:          make(chan *client),
+		clients:        make(map[*client]bool),
+		rooms:          make(map[room]string),
+		registerdUsers: make(map[string]*user),
 	}
 }
 
