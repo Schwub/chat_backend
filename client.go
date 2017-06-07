@@ -53,7 +53,7 @@ func (c client) handleUserEvent(m map[string]interface{}) {
 	switch m["command"] {
 	case "getAllUsers":
 		log.Println("handle allUsers")
-		msg := allUsersJson(c.hub.clients)
+		msg := allUsersJson(*c.hub)
 		log.Println(msg)
 		c.send <- msg
 	}

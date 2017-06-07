@@ -9,7 +9,8 @@ type allUsers struct {
 	data    []user `json:data`
 }
 
-func allUsersJson(m map[*client]bool) interface{} {
+func allUsersJson(h hub) interface{} {
+
 	//users := make([]user, 0, len(m))
 	//for k := range m {
 	//	users = append(users, k.user)
@@ -24,13 +25,15 @@ func allUsersJson(m map[*client]bool) interface{} {
 	alluser["type"] = "event"
 	alluser["subtype"] = "user"
 	alluser["event"] = "allUsers"
-	rainer := make(map[string]string)
-	rainer["name"] = "Rainer Winkler"
-	rainer["email"] = "drache@offiziel.alt"
-	rainer["id"] = "eins"
-
-	users := make([]interface{}, 0, 1)
-	users = append(users, rainer)
-	alluser["data"] = users
+	alluser["data"] = h.usersJson()
 	return alluser
+	//rainer := make(map[string]string)
+	//rainer["name"] = "Rainer Winkler"
+	//rainer["email"] = "drache@offiziel.alt"
+	//rainer["id"] = "eins"
+
+	//users := make([]interface{}, 0, 1)
+	//users = append(users, rainer)
+	//alluser["data"] = users
+	//return alluser
 }

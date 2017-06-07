@@ -9,3 +9,11 @@ type user struct {
 	password  string
 	avatarURL string
 }
+
+func (u user) userJson() map[string]interface{} {
+	uMap := make(map[string]interface{})
+	uMap["id"] = u.id
+	uMap["name"] = u.name
+	uMap["avatarURL"] = u.avatarURL
+	return uMap
+}

@@ -13,6 +13,14 @@ type hub struct {
 	rooms   map[room]string
 }
 
+func (h hub) usersJson() []map[string]interface{} {
+	users := make([]map[string]interface{}, 0, 0)
+	for k := range h.clients {
+		users = append(users, k.user.userJson())
+	}
+	return users
+}
+
 func newHub() *hub {
 	return &hub{
 		join:    make(chan *client),
