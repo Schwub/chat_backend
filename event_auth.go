@@ -1,6 +1,8 @@
 package main
 
-import ()
+import (
+	"log"
+)
 
 func newRegistration(c *client, m map[string]interface{}) interface{} {
 	d := m["data"]
@@ -16,7 +18,7 @@ func newRegistration(c *client, m map[string]interface{}) interface{} {
 		registrationsucces := make(map[string]interface{})
 		registrationsucces["type"] = "event"
 		registrationsucces["subtype"] = "auth"
-		registrationsucces["event"] = "registrationSucces"
+		registrationsucces["event"] = "registrationSuccess"
 		user := make(map[string]interface{})
 		user["user"] = c.user.userJson()
 		registrationsucces["data"] = user
@@ -40,10 +42,10 @@ func login(c *client, m map[string]interface{}) interface{} {
 				authsucces := make(map[string]interface{})
 				authsucces["type"] = "event"
 				authsucces["subtype"] = "auth"
-				authsucces["event"] = "authSucces"
+				authsucces["event"] = "authSuccess"
 				userJson := make(map[string]interface{})
 				userJson["user"] = c.user.userJson()
-				authsucces["user"] = userJson
+				authsucces["data"] = userJson
 				return authsucces
 			}
 		}

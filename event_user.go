@@ -2,7 +2,7 @@ package main
 
 import ()
 
-func getAllUsers(h hub) interface{} {
+func getAllUsers(h *hub) interface{} {
 
 	//users := make([]user, 0, len(m))
 	//for k := range m {
