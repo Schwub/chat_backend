@@ -10,7 +10,7 @@ func newMessage(c *client, m map[string]interface{}) {
 	newmessage := make(map[string]interface{})
 	newmessage["type"] = "event"
 	newmessage["subtype"] = "chat"
-	newmessage["command"] = "newMessage"
+	newmessage["event"] = "newMessage"
 	messageData := make(map[string]interface{})
 	messageData["message"] = data["message"]
 	messageData["roomName"] = data["channelName"].(string)

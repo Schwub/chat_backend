@@ -89,6 +89,7 @@ func (c *client) handleRoomEvent(m map[string]interface{}) {
 		c.send <- msg
 		msg = newRoomEvent(*room)
 		c.hub.sendToAll(msg)
+
 	case "joinRoom":
 		log.Println("handle joinRoom")
 		msg := joinRoom(c, m)
@@ -97,6 +98,9 @@ func (c *client) handleRoomEvent(m map[string]interface{}) {
 		leaveRoom(c, m)
 	case "getAllRooms":
 		//TODO
+		log.Println("handle getAllRooms")
+		msg := getAllRooms(c, m)
+		c.send <- msg
 	}
 }
 

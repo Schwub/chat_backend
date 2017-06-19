@@ -34,6 +34,8 @@ func joinRoom(c *client, m map[string]interface{}) interface{} {
 	joinroom["type"] = "event"
 	joinroom["subtype"] = "room"
 	joinroom["event"] = "joinRoomSuccess"
+	//TODO Error
+
 	return joinroom
 }
 
@@ -41,4 +43,13 @@ func leaveRoom(c *client, m map[string]interface{}) {
 	d := m["data"]
 	data := d.(map[string]interface{})
 	delete(c.hub.rooms[data["name"].(string)].clients, c)
+}
+
+func getAllRooms(c *client, m map[string]interface{}) interface{} {
+	getallrooms := make(map[string]interface{})
+	getallrooms["type"] = "event"
+	getallrooms["subytype"] = "room"
+	getallrooms["event"] = "allRooms"
+	getallrooms["data"] = c.hub.roomsJson()
+	return getallrooms
 }
