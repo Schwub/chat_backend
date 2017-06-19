@@ -1,8 +1,6 @@
 package main
 
-import (
-	"log"
-)
+import ()
 
 func newRegistration(c *client, m map[string]interface{}) interface{} {
 	d := m["data"]

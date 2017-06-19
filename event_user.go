@@ -30,3 +30,12 @@ func getAllUsers(h *hub) interface{} {
 	//alluser["data"] = users
 	//return alluser
 }
+
+func newUserEvent(u user) interface{} {
+	newuser := make(map[string]interface{})
+	newuser["type"] = "event"
+	newuser["subtype"] = "user"
+	newuser["event"] = "newUser"
+	newuser["data"] = u.userJson()
+	return newuser
+}

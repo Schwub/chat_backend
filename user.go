@@ -15,5 +15,6 @@ func (u user) userJson() map[string]interface{} {
 	uMap["id"] = u.id
 	uMap["name"] = u.name
 	uMap["avatarURL"] = u.avatarURL
+	uMap["email"] = u.email
 	return uMap
 }

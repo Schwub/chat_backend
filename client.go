@@ -11,7 +11,6 @@ type client struct {
 	socket *websocket.Conn
 	user   user
 	send   chan interface{}
-	rooms  map[*room]string
 }
 
 func (c *client) read() {
@@ -38,17 +37,20 @@ func (c *client) write() {
 	c.socket.Close()
 }
 
-func (c client) handleMessage(m map[string]interface{}) {
+func (c *client) handleMessage(m map[string]interface{}) {
 	log.Println("handle Message")
 	switch m["subtype"] {
 	case "user":
 		c.handleUserEvent(m)
 	case "auth":
 		c.handleAuthEvent(m)
+	case "room":
+		c.handleRoomEvent(m)
+	case "message":
+		c.handleMessageEvent(m)
 	default:
 		log.Println("Message handling not implemented, yet")
 	}
-
 }
 
 func (c *client) handleUserEvent(m map[string]interface{}) {
@@ -67,11 +69,41 @@ func (c *client) handleAuthEvent(m map[string]interface{}) {
 		log.Println("handle newRegistration")
 		msg := newRegistration(c, m)
 		c.send <- msg
+		msg = newUserEvent(c.user)
+		c.hub.sendToAll(msg)
 
 	case "login":
 		log.Println("handle login")
 		msg := login(c, m)
 		c.send <- msg
+		msg = newUserEvent(c.user)
+		c.hub.sendToAll(msg)
 	}
+}
 
+func (c *client) handleRoomEvent(m map[string]interface{}) {
+	switch m["command"] {
+	case "createRoom":
+		log.Println("handle newRoom")
+		msg, room := createRoom(c, m)
+		c.send <- msg
+		msg = newRoomEvent(*room)
+		c.hub.sendToAll(msg)
+	case "joinRoom":
+		log.Println("handle joinRoom")
+		msg := joinRoom(c, m)
+		c.send <- msg
+	case "leaveRoom":
+		leaveRoom(c, m)
+	case "getAllRooms":
+		//TODO
+	}
+}
+
+func (c *client) handleMessageEvent(m map[string]interface{}) {
+	switch m["command"] {
+	case "newMessage":
+		log.Println("handle newMessage from ", c)
+		newMessage(c, m)
+	}
 }

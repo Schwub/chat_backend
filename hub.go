@@ -10,8 +10,14 @@ type hub struct {
 	join           chan *client
 	leave          chan *client
 	clients        map[*client]bool
-	rooms          map[room]string
+	rooms          map[string]*room
 	registerdUsers map[string]*user
+}
+
+func (h *hub) sendToAll(msg interface{}) {
+	for k := range h.clients {
+		k.send <- msg
+	}
 }
 
 func (h hub) getAllRegisteredUserNames() []string {
@@ -34,7 +40,7 @@ func newHub() *hub {
 		join:           make(chan *client),
 		leave:          make(chan *client),
 		clients:        make(map[*client]bool),
-		rooms:          make(map[room]string),
+		rooms:          make(map[string]*room),
 		registerdUsers: make(map[string]*user),
 	}
 }
@@ -77,7 +83,6 @@ func (h *hub) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		hub:    h,
 		socket: socket,
 		send:   make(chan interface{}),
-		rooms:  make(map[*room]string),
 	}
 	h.join <- client
 	defer func() { h.leave <- client }()
