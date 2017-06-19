@@ -48,7 +48,7 @@ func leaveRoom(c *client, m map[string]interface{}) {
 func getAllRooms(c *client, m map[string]interface{}) interface{} {
 	getallrooms := make(map[string]interface{})
 	getallrooms["type"] = "event"
-	getallrooms["subytype"] = "room"
+	getallrooms["subtype"] = "room"
 	getallrooms["event"] = "allRooms"
 	getallrooms["data"] = c.hub.roomsJson()
 	return getallrooms

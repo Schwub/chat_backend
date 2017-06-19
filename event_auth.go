@@ -51,3 +51,7 @@ func login(c *client, m map[string]interface{}) interface{} {
 	//TODO error; user not found
 	return ""
 }
+
+func logout(c *client, m map[string]interface{}) {
+	c = nil
+}

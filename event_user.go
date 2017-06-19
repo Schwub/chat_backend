@@ -39,3 +39,12 @@ func newUserEvent(u user) interface{} {
 	newuser["data"] = u.userJson()
 	return newuser
 }
+
+func userLeaves(c *client) interface{} {
+	userleaves := make(map[string]interface{})
+	userleaves["type"] = "event"
+	userleaves["subtype"] = "user"
+	userleaves["event"] = "userLeaves"
+	userleaves["data"] = c.user.userJson()
+	return userleaves
+}

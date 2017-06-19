@@ -71,7 +71,11 @@ func (c *client) handleAuthEvent(m map[string]interface{}) {
 		c.send <- msg
 		msg = newUserEvent(c.user)
 		c.hub.sendToAll(msg)
-
+	case "logout":
+		log.Println("handle logout")
+		logout(c, m)
+		msg := userLeaves(c)
+		c.hub.sendToAll(msg)
 	case "login":
 		log.Println("handle login")
 		msg := login(c, m)
