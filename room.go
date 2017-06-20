@@ -25,9 +25,11 @@ func (r *room) roomJson() map[string]interface{} {
 	return mroom
 }
 
-func (r *room) sendToRoom(message interface{}) {
+func (r *room) sendToRoom(message interface{}, client *client) {
 	for c := range r.clients {
-		//TODO dont sent to orignial sender
+		if c == client {
+			continue
+		}
 		c.send <- message
 	}
 }

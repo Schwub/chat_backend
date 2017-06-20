@@ -1,9 +1,11 @@
 package main
 
-import ()
+import (
+	"gopkg.in/mgo.v2/bson"
+)
 
 type user struct {
-	id        uint64
+	id        bson.ObjectId
 	name      string
 	email     string
 	password  string
@@ -17,4 +19,14 @@ func (u user) userJson() map[string]interface{} {
 	uMap["avatarURL"] = u.avatarURL
 	uMap["email"] = u.email
 	return uMap
+}
+
+func (u *user) castDbuser() dbuser {
+	return dbuser{
+		Id:        u.id,
+		Name:      u.name,
+		Email:     u.email,
+		Password:  u.password,
+		AvatarURL: u.avatarURL,
+	}
 }

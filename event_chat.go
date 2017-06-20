@@ -1,8 +1,6 @@
 package main
 
-import (
-	"log"
-)
+import ()
 
 func newMessage(c *client, m map[string]interface{}) {
 	d := m["data"]
@@ -15,7 +13,6 @@ func newMessage(c *client, m map[string]interface{}) {
 	messageData["message"] = data["message"]
 	messageData["roomName"] = data["channelName"].(string)
 	newmessage["data"] = messageData
-	log.Println("----------------------------------------------", newmessage)
-	c.hub.rooms[data["channelName"].(string)].sendToRoom(newmessage)
+	c.hub.rooms[data["channelName"].(string)].sendToRoom(newmessage, c)
 
 }

@@ -1,6 +1,8 @@
 package main
 
-import ()
+import (
+	"gopkg.in/mgo.v2/bson"
+)
 
 func newRegistration(c *client, m map[string]interface{}) interface{} {
 	d := m["data"]
@@ -10,6 +12,7 @@ func newRegistration(c *client, m map[string]interface{}) interface{} {
 			name:     data["name"].(string),
 			email:    data["email"].(string),
 			password: data["password"].(string),
+			id:       bson.NewObjectId(),
 		}
 		c.hub.registerdUsers[data["name"].(string)] = &newUser
 		c.user = newUser

@@ -18,7 +18,7 @@ func (c *client) read() {
 		var dat map[string]interface{}
 		if _, msg, err := c.socket.ReadMessage(); err == nil {
 			json.Unmarshal(msg, &dat)
-			log.Printf("client/read()", dat)
+			log.Printf(c.user.name, ": client.read()", dat)
 			c.handleMessage(dat)
 		} else {
 			break
@@ -29,7 +29,7 @@ func (c *client) read() {
 
 func (c *client) write() {
 	for msg := range c.send {
-		log.Println("client.write: ", msg)
+		log.Println(c.user.name, ": client.write() ", msg)
 		if err := c.socket.WriteJSON(msg); err != nil {
 			break
 		}
@@ -56,9 +56,8 @@ func (c *client) handleMessage(m map[string]interface{}) {
 func (c *client) handleUserEvent(m map[string]interface{}) {
 	switch m["command"] {
 	case "getAllUsers":
-		log.Println("handle allUsers")
+		log.Println("handle getAllUsers")
 		msg := getAllUsers(c.hub)
-		log.Println(msg)
 		c.send <- msg
 	}
 }
@@ -71,7 +70,7 @@ func (c *client) handleAuthEvent(m map[string]interface{}) {
 		c.send <- msg
 		msg = newUserEvent(c.user)
 		c.hub.sendToAll(msg)
-		c.hub.updateDB(*c)
+		c.hub.db.DB("chat").C("users").Insert(c.user.castDbuser())
 	case "logout":
 		log.Println("handle logout")
 		logout(c, m)
@@ -100,6 +99,7 @@ func (c *client) handleRoomEvent(m map[string]interface{}) {
 		msg := joinRoom(c, m)
 		c.send <- msg
 	case "leaveRoom":
+		log.Println("handle leaveRoom")
 		leaveRoom(c, m)
 	case "getAllRooms":
 		//TODO
@@ -112,7 +112,7 @@ func (c *client) handleRoomEvent(m map[string]interface{}) {
 func (c *client) handleMessageEvent(m map[string]interface{}) {
 	switch m["command"] {
 	case "newMessage":
-		log.Println("handle newMessage from ", c)
+		log.Println("handle newMessage")
 		newMessage(c, m)
 	}
 }
