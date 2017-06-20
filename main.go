@@ -11,6 +11,7 @@ func main() {
 	http.Handle("/", h)
 	log.Println("Handle HTTP Request")
 	go h.run()
+	log.Println("----------------------------------------", h.getAllRegisteredUserNames())
 	if err := http.ListenAndServe(":5001", nil); err != nil {
 		log.Println("ListenAndServe:", err)
 	}
