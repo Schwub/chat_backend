@@ -11,7 +11,7 @@ func createRoom(c *client, m map[string]interface{}) (interface{}, *room) {
 	//TODO handle room new already in user
 	createroom["event"] = "newChannelSuccess"
 	createroom["data"] = room.name
-	c.hub.rooms[room.name].clients[c] = true
+	//c.hub.rooms[room.name].clients[c] = true
 	return createroom, room
 }
 
@@ -34,6 +34,7 @@ func joinRoom(c *client, m map[string]interface{}) interface{} {
 	joinroom["type"] = "event"
 	joinroom["subtype"] = "room"
 	joinroom["event"] = "joinRoomSuccess"
+	newMember(c.user, c.hub.rooms[room["name"].(string)], c)
 	//TODO Error
 
 	return joinroom
@@ -42,6 +43,7 @@ func joinRoom(c *client, m map[string]interface{}) interface{} {
 func leaveRoom(c *client, m map[string]interface{}) {
 	d := m["data"]
 	data := d.(map[string]interface{})
+	memberLeaves(c.user, data["name"].(string), c)
 	delete(c.hub.rooms[data["name"].(string)].clients, c)
 }
 
@@ -52,4 +54,32 @@ func getAllRooms(c *client, m map[string]interface{}) interface{} {
 	getallrooms["event"] = "allRooms"
 	getallrooms["data"] = c.hub.roomsJson()
 	return getallrooms
+}
+
+func newMember(u user, r *room, c *client) {
+	newmember := make(map[string]interface{})
+	newmember["type"] = "event"
+	newmember["subtype"] = "room"
+	newmember["event"] = "newMember"
+	data := make(map[string]interface{})
+	data["name"] = r.name
+	data["user"] = u.userJson()
+	newmember["data"] = data
+	for c := range c.hub.clients {
+		c.send <- newmember
+	}
+}
+
+func memberLeaves(u user, r string, c *client) {
+	memberleaves := make(map[string]interface{})
+	memberleaves["type"] = "event"
+	memberleaves["subtype"] = "room"
+	memberleaves["event"] = "leaveRoom"
+	data := make(map[string]interface{})
+	data["channelName"] = r
+	data["userId"] = u.id
+	memberleaves["data"] = data
+	for c := range c.hub.clients {
+		c.send <- memberleaves
+	}
 }

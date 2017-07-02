@@ -65,7 +65,7 @@ func (h hub) roomsJson() []map[string]interface{} {
 }
 
 func newHub() *hub {
-	session, err := mgo.Dial("localhost")
+	session, err := mgo.Dial("mongodb:27017")
 	if err != nil {
 		panic(err)
 	}
