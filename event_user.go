@@ -2,7 +2,7 @@ package main
 
 import ()
 
-func getAllUsers(h *hub) interface{} {
+func getAllUsers(h *hub) map[string]interface{} {
 
 	//users := make([]user, 0, len(m))
 	//for k := range m {
@@ -31,7 +31,7 @@ func getAllUsers(h *hub) interface{} {
 	//return alluser
 }
 
-func newUserEvent(u user) interface{} {
+func newUserEvent(u user) map[string]interface{} {
 	newuser := make(map[string]interface{})
 	newuser["type"] = "event"
 	newuser["subtype"] = "user"

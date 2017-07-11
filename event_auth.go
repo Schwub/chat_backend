@@ -45,7 +45,8 @@ func newRegistration(c *client, m map[string]interface{}) interface{} {
 	return registrationError
 }
 
-func login(c *client, m map[string]interface{}) interface{} {
+func login(c *client, m map[string]interface{}) map[string]interface{} {
+	log.Println("----------------______________--------------------", m)
 	d := m["data"]
 	data := d.(map[string]interface{})
 	for _, user := range c.hub.registerdUsers {
@@ -83,15 +84,28 @@ func logout(c *client, m map[string]interface{}) {
 }
 
 func checkLogin(c *client, m map[string]interface{}) map[string]interface{} {
-	m["command"] = "login"
-	msg := login(c, m)
-	if msg["type"] == "error" {
-		errorCheckLogin := make(map[string]interface{})
-		errorCheckLogin["type"] = "error"
-		errorCheckLogin["subytpye"] = "auth"
-		errorCheckLogin["error"] = "authError"
-		errorCheckLogin["data"] = "error"
-		return errorCheckLogin
+	d := m["data"]
+	data := d.(map[string]interface{})
+	u := data["user"]
+	authuser := u.(map[string]interface{})
+	if authuser["name"] != "" {
+		for _, user := range c.hub.registerdUsers {
+			if user.name == authuser["name"] {
+				c.user = *user
+				checklogin := make(map[string]interface{})
+				checklogin["type"] = "event"
+				checklogin["subtype"] = "auth"
+				checklogin["event"] = "authSucces"
+				checklogin["data"] = c.user.userJson()
+				return checklogin
+			}
+		}
 	}
-	return msg
+
+	errorCheckLogin := make(map[string]interface{})
+	errorCheckLogin["type"] = "error"
+	errorCheckLogin["subytpye"] = "auth"
+	errorCheckLogin["error"] = "authError"
+	errorCheckLogin["data"] = "error"
+	return errorCheckLogin
 }
