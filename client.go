@@ -82,6 +82,10 @@ func (c *client) handleAuthEvent(m map[string]interface{}) {
 		c.send <- msg
 		msg = newUserEvent(c.user)
 		c.hub.sendToAll(msg)
+	case "checkLogin":
+		log.Println("handle checkLogin")
+		msg := checkLogin(c, m)
+		c.send <- msg
 	}
 }
 

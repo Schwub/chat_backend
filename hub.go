@@ -25,6 +25,14 @@ type dbuser struct {
 	AvatarURL string        `json:"avatarURL" bson:"avatarURL"`
 }
 
+func (h *hub) createUserEmailMap() map[string]bool {
+	emails := make(map[string]bool)
+	for _, user := range h.registerdUsers {
+		emails[user.email] = true
+	}
+	return emails
+}
+
 func (u *dbuser) castUser() *user {
 	return &user{
 		id:        u.Id,
@@ -65,7 +73,7 @@ func (h hub) roomsJson() []map[string]interface{} {
 }
 
 func newHub() *hub {
-	session, err := mgo.Dial("mongodb:27017")
+	session, err := mgo.Dial("localhost:27017")
 	if err != nil {
 		panic(err)
 	}
@@ -95,6 +103,8 @@ func (h *hub) run() {
 			h.clients[client] = true
 			log.Println("Client joined")
 		case client := <-h.leave:
+			msg := userLeaves(client)
+			h.sendToAll(msg)
 			delete(h.clients, client)
 			close(client.send)
 			log.Println("Client left")

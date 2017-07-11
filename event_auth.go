@@ -2,11 +2,23 @@ package main
 
 import (
 	"gopkg.in/mgo.v2/bson"
+	"log"
 )
 
 func newRegistration(c *client, m map[string]interface{}) interface{} {
 	d := m["data"]
 	data := d.(map[string]interface{})
+	emails := c.hub.createUserEmailMap()
+	log.Println(emails)
+	log.Println(emails[data["email"].(string)])
+	if _, registered := emails[data["email"].(string)]; registered {
+		registrationError := make(map[string]interface{})
+		registrationError["type"] = "error"
+		registrationError["subtype"] = "auth"
+		registrationError["error"] = "registrationError"
+		registrationError["data"] = "Email already registered"
+		return registrationError
+	}
 	if _, registered := c.hub.registerdUsers[data["name"].(string)]; !registered {
 		newUser := user{
 			name:     data["name"].(string),
@@ -25,9 +37,12 @@ func newRegistration(c *client, m map[string]interface{}) interface{} {
 		registrationsucces["data"] = user
 		return registrationsucces
 	}
-	//TODO handle error
-
-	return ""
+	registrationError := make(map[string]interface{})
+	registrationError["type"] = "error"
+	registrationError["subtype"] = "auth"
+	registrationError["error"] = "registrationError"
+	registrationError["data"] = "Name already registered"
+	return registrationError
 }
 
 func login(c *client, m map[string]interface{}) interface{} {
@@ -36,8 +51,12 @@ func login(c *client, m map[string]interface{}) interface{} {
 	for _, user := range c.hub.registerdUsers {
 		if user.email == data["user"].(string) {
 			if user.password != data["password"].(string) {
-				//TODO error; wrong password
-				return ""
+				authError := make(map[string]interface{})
+				authError["type"] = "error"
+				authError["subtype"] = "auth"
+				authError["error"] = "authError"
+				authError["data"] = "Wrong Password"
+				return authError
 			} else {
 				c.user = *user
 				authsucces := make(map[string]interface{})
@@ -51,10 +70,28 @@ func login(c *client, m map[string]interface{}) interface{} {
 			}
 		}
 	}
-	//TODO error; user not found
-	return ""
+	authError := make(map[string]interface{})
+	authError["type"] = "error"
+	authError["subtype"] = "auth"
+	authError["error"] = "authError"
+	authError["data"] = "User does not exist"
+	return authError
 }
 
 func logout(c *client, m map[string]interface{}) {
 	c = nil
+}
+
+func checkLogin(c *client, m map[string]interface{}) map[string]interface{} {
+	m["command"] = "login"
+	msg := login(c, m)
+	if msg["type"] == "error" {
+		errorCheckLogin := make(map[string]interface{})
+		errorCheckLogin["type"] = "error"
+		errorCheckLogin["subytpye"] = "auth"
+		errorCheckLogin["error"] = "authError"
+		errorCheckLogin["data"] = "error"
+		return errorCheckLogin
+	}
+	return msg
 }

@@ -45,6 +45,11 @@ func leaveRoom(c *client, m map[string]interface{}) {
 	data := d.(map[string]interface{})
 	memberLeaves(c.user, data["name"].(string), c)
 	delete(c.hub.rooms[data["name"].(string)].clients, c)
+	if len(c.hub.rooms[data["name"].(string)].clients) == 0 {
+		delete(c.hub.rooms, data["name"].(string))
+		msg := getAllRooms(c, m)
+		c.hub.sendToAll(msg)
+	}
 }
 
 func getAllRooms(c *client, m map[string]interface{}) interface{} {
