@@ -97,8 +97,10 @@ func (c *client) handleRoomEvent(m map[string]interface{}) {
 		log.Println("handle newRoom")
 		msg, room := createRoom(c, m)
 		c.send <- msg
-		msg = newRoomEvent(*room)
-		c.hub.sendToAll(msg)
+		if room != nil {
+			msg = newRoomEvent(*room)
+			c.hub.sendToAll(msg)
+		}
 
 	case "joinRoom":
 		log.Println("handle joinRoom")

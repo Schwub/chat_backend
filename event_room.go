@@ -3,8 +3,20 @@ package main
 import ()
 
 func createRoom(c *client, m map[string]interface{}) (interface{}, *room) {
+
 	room := newRoom(m["data"].(string))
+	for _, eroom := range c.hub.rooms {
+		if room.name == eroom.name {
+			channelError := make(map[string]interface{})
+			channelError["type"] = "error"
+			channelError["subtype"] = "room"
+			channelError["error"] = "newChannelError"
+			channelError["data"] = "Chat Name already in use"
+			return channelError, nil
+		}
+	}
 	c.hub.rooms[room.name] = room
+
 	createroom := make(map[string]interface{})
 	createroom["type"] = "event"
 	createroom["subtype"] = "room"
